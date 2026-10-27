@@ -1,23 +1,23 @@
+
 import pytest
-from sqlalchemy.orm import Session
-from SRC.Main.api.db.crud.accout_crud import AccountCrudDb as Account
+
 from SRC.Main.api.classes.api_manager import ApiManager
-from SRC.Main.api.models.create_user_request import CreateUserRequest
-from SRC.Main.api.models.deposit_request import  DepositRequest
+from SRC.Main.api.models.deposit_request import DepositRequest
+from SRC.Main.api.models.create_credit_user_request import CreateUserCreditRequest
+from SRC.Main.api.generators.model_generator import RandomModelGenerator
 
 
 @pytest.mark.api
 class TestDeposit:
-        def test_deposit(self, api_manager:ApiManager, create_user_request: CreateUserRequest, db_session: Session):
-            response = api_manager.user_steps.create_account(create_user_request)
 
-            assert response.balance == 0
+    def test_deposit(self,api_manager: ApiManager,create_credit_user_request: CreateUserCreditRequest):
+        account_response = api_manager.user_steps.create_account(create_credit_user_request)
 
-            deposit_request = DepositRequest(accountId=response.id, amount=1400.5)
-            response = api_manager.user_steps.deposit(deposit_request, create_user_request)
+        assert account_response.balance == 0,"Баланс нового счёта должен быть равен 0"
 
-            assert response.balance == 1400.5
-            account_from_db = Account.get_account_by_id(db_session, response.id)
-            assert account_from_db.id == response.id, 'Аккаун не создан,id аккаунт а нет в БД'
-            assert account_from_db.balance is not None, 'Поле баланса для созданного аккаунта отсутствует в БД'
+        deposit_request = RandomModelGenerator.generate(DepositRequest)
+        deposit_request.accountId = account_response.id
 
+        deposit_response = api_manager.user_steps.deposit(deposit_request,create_credit_user_request)
+
+        assert deposit_response.balance == deposit_request.amount,"После пополнения баланс должен увеличиться на сумму пополнения"

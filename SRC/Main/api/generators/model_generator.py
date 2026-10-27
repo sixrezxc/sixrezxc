@@ -15,20 +15,25 @@ class RandomModelGenerator:
 
         for field_name, annotated_type in type_hints.items():
             rule = None
-            actual_type = annotated_type()
+            actual_type = annotated_type
 
             if get_origin(annotated_type) is Annotated:
                 actual_type, *annotations = get_args(annotated_type)
                 for ann in annotations:
                     if isinstance(ann, CreationRule):
                         rule = ann
-            if rule:
+            if (
+                    rule is not None
+                    and actual_type is int
+                    and rule.min_value is not None
+                    and rule.max_value is not None):
+                value = random.randint(rule.min_value, rule.max_value)
+            elif rule is not None:
                 value = RandomModelGenerator._generate_from_regex(rule.regex, actual_type)
             else:
                 value = RandomModelGenerator._generate_value(actual_type)
 
             init_data[field_name] = value
-
         return cls(**init_data)
 
     @staticmethod
