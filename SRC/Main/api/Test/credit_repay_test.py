@@ -26,4 +26,4 @@ class TestCreditRepay:
         repay_request.amount = credit_request.amount
 
         repay_response = api_manager.user_steps.credit_repay(repay_request,create_credit_user_request)
-        assert repay_response.balance == 0
+        assert repay_response.amountDeposited == credit_req uest.amount

@@ -49,7 +49,7 @@ class RandomModelGenerator:
         if field_type is str:
             return str(uuid.uuid4())[:8]
         elif field_type is int:
-            return random.randint(1, 9999)
+            return random.randint(1, 9000)
         elif field_type is float:
             return round(random.uniform(1, 100), 2)
         elif field_type is bool:
