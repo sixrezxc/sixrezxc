@@ -5,7 +5,6 @@ from SRC.Main.api.classes.api_manager import ApiManager
 from SRC.Main.api.db.crud.user_crud import UserCrudDb as User
 from SRC.Main.api.models.create_user_request import CreateUserRequest
 
-
 @pytest.mark.api
 class TestUserLogin:
     def test_login_user(self, api_manager: ApiManager, create_user_request: CreateUserRequest, db_session: Session):
